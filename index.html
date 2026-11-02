@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>ФавАвто — спецтехника из Китая</title>
+<meta name="description" content="Спецтехника из Китая в наличии в Краснодаре и под заказ: автобетононасосы, автовышки, манипуляторы, тралы.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%23F2A900'/%3E%3Cpath d='M8 31 17 15l9 6 7-12' fill='none' stroke='%23161a1f' stroke-width='4.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='6' y='29' width='15' height='5' rx='1.5' fill='%23161a1f'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="logo" href="#/" aria-label="ФавАвто — на главную">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="9" fill="#F2A900"/><path d="M8 31 17 15l9 6 7-12" fill="none" stroke="#161a1f" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="6" y="29" width="15" height="5" rx="1.5" fill="#161a1f"/></svg>
+      <span><b>ФАВАВТО</b><small>спецтехника из Китая</small></span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="#/catalog" data-nav="catalog">Каталог</a>
+      <a href="#/catalog/stock" data-nav="stock">В наличии</a>
+      <a href="#/order" data-nav="order">Под заказ</a>
+      <a href="#/portfolio" data-nav="portfolio">Портфолио</a>
+      <a href="#/contacts" data-nav="contacts">Контакты</a>
+    </nav>
+    <a class="top-phone" href="tel:88002501598"><b>8 800 250-15-98</b><small>Пн–Пт 9:00–18:00</small></a>
+    <button class="btn btn-acc top-btn" data-request="">Заявка</button>
+    <button class="burger" id="burger" aria-label="Меню"><i></i><i></i><i></i></button>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div>
+      <a class="logo logo-w" href="#/"><svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="9" fill="#F2A900"/><path d="M8 31 17 15l9 6 7-12" fill="none" stroke="#161a1f" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="6" y="29" width="15" height="5" rx="1.5" fill="#161a1f"/></svg><span><b>ФАВАВТО</b><small>спецтехника из Китая</small></span></a>
+      <p>ООО «ФавАвто Трейд». Спецтехника в наличии в Краснодаре и поставки под заказ напрямую с заводов Китая.</p>
+    </div>
+    <div><h4>Техника</h4><a href="#/catalog/pump">Автобетононасосы</a><a href="#/catalog/lift">Автовышки</a><a href="#/catalog/manip">Манипуляторы</a><a href="#/catalog/tral">Тралы</a></div>
+    <div><h4>Компания</h4><a href="#/order">Под заказ</a><a href="#/portfolio">Портфолио</a><a href="#/contacts">Контакты</a></div>
+    <div><h4>Связаться</h4><a href="tel:88002501598">8 800 250-15-98</a><span>Пн–Пт 9:00–18:00</span><span>Краснодар</span></div>
+  </div>
+  <div class="wrap foot-note">Прототип сайта. Цены и характеристики — из коммерческих предложений; фото из архива поставленной техники, для примера.</div>
+</footer>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="mtitle">
+    <button class="modal-x" data-close aria-label="Закрыть">×</button>
+    <h3 id="mtitle">Заявка на технику</h3>
+    <p class="muted" id="msub">Перезвоним в течение рабочего дня, подберём технику и посчитаем цену.</p>
+    <form class="form" id="mform"></form>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
