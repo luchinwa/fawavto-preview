@@ -8,18 +8,15 @@
 <meta name="description" content="Спецтехника из Китая в наличии в Краснодаре и под заказ: автобетононасосы, автовышки, манипуляторы, тралы.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800;900&family=Unbounded:wght@800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%23F2A900'/%3E%3Cpath d='M8 31 17 15l9 6 7-12' fill='none' stroke='%23161a1f' stroke-width='4.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='6' y='29' width='15' height='5' rx='1.5' fill='%23161a1f'/%3E%3C/svg%3E">
+<link rel="icon" id="fav" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%23F2A900'/%3E%3Cpath d='M8 31 17 15l9 6 7-12' fill='none' stroke='%23161a1f' stroke-width='4.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='6' y='29' width='15' height='5' rx='1.5' fill='%23161a1f'/%3E%3C/svg%3E">
 </head>
 <body>
 
 <header class="top">
   <div class="wrap top-in">
-    <a class="logo" href="#/" aria-label="ФавАвто — на главную">
-      <svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="9" fill="#F2A900"/><path d="M8 31 17 15l9 6 7-12" fill="none" stroke="#161a1f" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="6" y="29" width="15" height="5" rx="1.5" fill="#161a1f"/></svg>
-      <span><b>ФАВАВТО</b><small>спецтехника из Китая</small></span>
-    </a>
+    <a class="logo" href="#/" aria-label="ФавАвто — на главную" data-logo="0"></a>
     <nav class="nav" id="nav">
       <a href="#/catalog" data-nav="catalog">Каталог</a>
       <a href="#/catalog/stock" data-nav="stock">В наличии</a>
@@ -38,7 +35,7 @@
 <footer class="foot">
   <div class="wrap foot-in">
     <div>
-      <a class="logo logo-w" href="#/"><svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="9" fill="#F2A900"/><path d="M8 31 17 15l9 6 7-12" fill="none" stroke="#161a1f" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="6" y="29" width="15" height="5" rx="1.5" fill="#161a1f"/></svg><span><b>ФАВАВТО</b><small>спецтехника из Китая</small></span></a>
+      <a class="logo logo-w" href="#/" aria-label="ФавАвто — на главную" data-logo="1"></a>
       <p>ООО «ФавАвто Трейд». Спецтехника в наличии в Краснодаре и поставки под заказ напрямую с заводов Китая.</p>
     </div>
     <div><h4>Техника</h4><a href="#/catalog/pump">Автобетононасосы</a><a href="#/catalog/lift">Автовышки</a><a href="#/catalog/manip">Манипуляторы</a><a href="#/catalog/tral">Тралы</a><a href="#/catalog/loader">Погрузчики MGP</a></div>
@@ -57,6 +54,11 @@
   </div>
 </div>
 
+<div class="lsw" id="lsw">
+  <span>Логотип</span><div id="lsw-b"></div><a href="logo.html">все варианты</a>
+</div>
+
+<script src="logos.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

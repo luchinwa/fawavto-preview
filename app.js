@@ -363,5 +363,17 @@ document.addEventListener('submit', e => {
   e.target.innerHTML = '<div class="ok">Спасибо! Заявка принята — перезвоним в течение рабочего дня.<br><small style="color:inherit;font-weight:400">Прототип: отправка заявок будет настроена после выбора канала.</small></div>';
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') $('#modal').hidden = true; });
+// превью: переключатель вариантов логотипа (logos.js), выбор запоминается; ?logo=N в адресе
+function setLogo(i){
+  document.querySelectorAll('[data-logo]').forEach(el => el.innerHTML = siteLogo(V[i], el.dataset.logo === '1'));
+  $('#fav').href = favicon(V[i]);
+  document.querySelectorAll('[data-lg]').forEach(b => b.classList.toggle('on', +b.dataset.lg === i));
+  try { localStorage.setItem('fw-logo', i); } catch (e) {}
+}
+$('#lsw-b').innerHTML = V.map((v, i) => `<button data-lg="${i}" title="${v.t}">${i + 1}</button>`).join('');
+document.addEventListener('click', e => { const b = e.target.closest('[data-lg]'); if (b) setLogo(+b.dataset.lg); });
+let lg = +(new URLSearchParams(location.search).get('logo') || 0) - 1;
+if (!(lg >= 0 && lg < V.length)) { try { lg = +localStorage.getItem('fw-logo') || 0; } catch (e) { lg = 0; } }
+setLogo(lg >= 0 && lg < V.length ? lg : 0);
 window.addEventListener('hashchange', route);
 route();
