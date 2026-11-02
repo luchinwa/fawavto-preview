@@ -92,7 +92,7 @@ section{padding:72px 0 0}
 .card-f .btn{height:40px;padding:0 14px;font-size:14px}
 
 /* category tiles */
-.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.cats{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
 .cat-t{position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:5/4;color:#fff;background:#222}
 .cat-t img{width:100%;height:100%;object-fit:cover;transition:.4s}
 .cat-t:hover img{transform:scale(1.05)}
