@@ -163,7 +163,36 @@ const PF = [
   ['other', 'Вышки и погрузчики', [['p174', 'Автовышка на ISUZU'], ['p022', 'Фронтальный погрузчик'], ['p181', 'Экскаватор-погрузчик'], ['p177', 'Вилочный погрузчик']]],
 ];
 
+const WEEK = ['amur', 'sqs125', 'mg946', 'pumpx62'];
+
 const STEPS = [['Заявка', 'Тип техники, задачи, бюджет и сроки'], ['Подбор и договор', 'Модель, комплектация, цена и срок поставки'], ['Поставка', 'Выкуп на заводе, доставка, таможенное оформление'], ['Передача', 'ЭПТС и передача техники в Краснодаре']];
+
+// курс ЦБ: запасное значение на 04.11.2026, при загрузке обновляется с cbr-xml-daily.ru
+let RATE = {v: 12.18, d: '04.11.2026'};
+const isCny = m => m.price.endsWith('¥');
+const num = m => +m.price.replace(/\D/g, '');
+const fmtRub = r => r >= 1e6 ? (r / 1e6).toFixed(1).replace('.', ',').replace(',0', '') + ' млн ₽' : Math.round(r / 1e3) + ' тыс. ₽';
+const rub = m => isCny(m) ? `<span data-rub="${num(m)}">≈ ${fmtRub(num(m) * RATE.v)}</span>` : '';
+const rateTxt = () => `<span data-rate>${RATE.v.toFixed(2).replace('.', ',')}</span>`;
+
+// подборки для каталога (SEO-страницы)
+const TAGS = {
+  'mercedes':  {n: 'Бетононасосы на Mercedes-Benz', f: m => /Mercedes/.test(m.name)},
+  'isuzu':     {n: 'Техника на шасси ISUZU', f: m => /ISUZU/.test(m.name)},
+  'pump-50':   {n: 'Бетононасосы 52–62 м', f: m => m.cat === 'pump' && /\b[56]\d м/.test(m.name)},
+  'manip-5':   {n: 'Манипуляторы 5–9 т', f: m => m.cat === 'manip'},
+  'loader-cn': {n: 'Китайские погрузчики', f: m => m.cat === 'loader'},
+  'rub':       {n: 'Цена в рублях', f: m => !isCny(m)},
+};
+
+// вкладка «Описание» по типу техники
+const DESC = {
+  pump: 'Автобетононасос для подачи бетона на высоту и в труднодоступные места: стройка, монолит, мосты. Стрела из нескольких секций, поворот 360°, выносные опоры. Поставляем новые машины SANY и XCMG на шасси Mercedes-Benz и ISUZU.',
+  lift: 'Автогидроподъёмник (АГП) для работ на высоте: монтаж, обслуживание освещения и фасадов, коммунальные работы. Телескопическая стрела, люлька с поворотом, управление из люльки и с пульта.',
+  manip: 'Бортовой автомобиль с крано-манипуляторной установкой XCMG: погрузка и перевозка стройматериалов, оборудования, контейнеров одной машиной.',
+  tral: 'Низкорамный полуприцеп для перевозки спецтехники и негабаритных грузов. Пневмоподвеска, алюминиевые сходни, точки крепления груза.',
+  loader: 'Погрузчики собственной марки MGP: работа с сыпучими материалами, погрузка, планировка, складские работы. Быстросъём навесного оборудования, кабина с кондиционером.',
+};
 
 const $ = s => document.querySelector(s);
 const img = (n, alt = '', cls = '') => `<img src="img/${n}.jpg" alt="${alt}" loading="lazy"${cls ? ` class="${cls}"` : ''}>`;
@@ -172,14 +201,14 @@ const plural = (n, a, b, c) => n + ' ' + (n % 10 === 1 && n % 100 !== 11 ? a : n
 
 function card(m){
   return `<article class="card">
-    <a class="thumb" href="#/m/${m.id}">${img(m.imgs[0], m.name)}<span class="badge ${m.stock ? 'in' : 'ord'}">${m.stock ? 'В наличии' : 'Под заказ'}</span></a>
+    <a class="thumb" href="#/m/${m.id}">${img(m.imgs[0], m.name)}<span class="badge ${m.stock ? 'in' : 'ord'}">${m.stock ? 'В наличии' : 'Под заказ'}</span>${WEEK.includes(m.id) ? '<span class="badge wk">Предложение недели</span>' : ''}</a>
     <div class="card-b">
       <span class="cat">${CATS[m.cat].name}</span>
       <h3><a href="#/m/${m.id}">${m.name}</a></h3>
       <div class="chips">${m.chips.map(c => `<span>${c}</span>`).join('')}</div>
       <div class="card-f">
-        <div><div class="price">${m.price}<small>${m.stock ? 'с НДС · ' + CITY : 'с НДС · срок ' + m.lead}</small></div></div>
-        <button class="btn btn-dark" data-request="${m.id}">Запросить</button>
+        <div><div class="price">${m.price}<small>${isCny(m) ? rub(m) + ' · ' : ''}${m.stock ? 'с НДС · ' + CITY : 'с НДС · срок ' + m.lead}</small></div></div>
+        <button class="btn btn-dark" data-request="${m.id}" data-mode="${m.stock ? 'buy' : 'lead'}">${m.stock ? 'Заказать' : 'Узнать сроки'}</button>
       </div>
     </div>
   </article>`;
@@ -220,6 +249,7 @@ const conds = () => `<div class="conds">
 function home(){
   const stock = M.filter(m => m.stock);
   const order = ['pumpx62', 'pump56', 'sqs200', 'lift45'].map(id => M.find(m => m.id === id));
+  const week = WEEK.map(id => M.find(m => m.id === id));
   return `<div class="hero" style="background-image:url(img/hero.jpg)"><div class="wrap hero-in">
       <span class="tag">ООО «ФавАвто Трейд»</span>
       <h1>Спецтехника из Китая — <em>в наличии</em> в Краснодаре и под заказ</h1>
@@ -228,6 +258,8 @@ function home(){
       <div class="facts"><div><b>${plural(stock.length, 'машина', 'машины', 'машин')}</b><span>в наличии в Краснодаре</span></div><div><b>до 62 м</b><span>бетононасосы SANY и XCMG</span></div><div><b>30–60 дней</b><span>поставка под заказ</span></div><div><b>НДС · ЭПТС</b><span>полный пакет документов</span></div></div>
   </div></div>
   <div class="wrap">
+    <section><div class="sec-head"><div><h2>Предложения недели</h2><p>Выбор менеджера: машины, которые стоит посмотреть в первую очередь</p></div><a class="more" href="#/catalog">Весь каталог</a></div>
+      <div class="grid g4">${week.map(card).join('')}</div></section>
     <section><div class="sec-head"><div><h2>В наличии в Краснодаре</h2><p>Можно осмотреть и забрать сразу</p></div><a class="more" href="#/catalog/stock">Вся техника в наличии</a></div>
       <div class="grid">${stock.map(card).join('')}</div></section>
     <section><div class="sec-head"><div><h2>Каталог</h2><p>Модели с ценами и характеристиками</p></div><a class="more" href="#/catalog">Весь каталог</a></div>
@@ -245,12 +277,15 @@ function home(){
 }
 
 function catalog(f = 'all'){
-  const list = f === 'all' ? M : f === 'stock' ? M.filter(m => m.stock) : f === 'order' ? M.filter(m => !m.stock) : byCat(f);
-  const title = CATS[f] ? CATS[f].name : f === 'stock' ? 'В наличии в Краснодаре' : f === 'order' ? 'Под заказ' : 'Каталог спецтехники';
+  const t = TAGS[f];
+  const list = t ? M.filter(t.f) : f === 'all' ? M : f === 'stock' ? M.filter(m => m.stock) : f === 'order' ? M.filter(m => !m.stock) : byCat(f);
+  const title = t ? t.n : CATS[f] ? CATS[f].name : f === 'stock' ? 'В наличии в Краснодаре' : f === 'order' ? 'Под заказ' : 'Каталог спецтехники';
+  seo(`${title} — купить в Краснодаре, цены`, `${title}: ${plural(list.length, 'модель', 'модели', 'моделей')} с ценами и характеристиками. В наличии в Краснодаре и под заказ из Китая.`);
   const tab = (k, n, c) => `<a href="#/catalog${k === 'all' ? '' : '/' + k}" class="${f === k ? 'on' : ''}">${n}<small>${c}</small></a>`;
   return phero(`<a href="#/catalog">Каталог</a>${f !== 'all' ? ' / ' + title : ''}`, title, 'Цены с НДС, в рублях или юанях; оплата в рублях по курсу банка поставщика на день оплаты.') +
   `<div class="wrap">
     <div class="filters">${tab('all', 'Все', M.length)}${tab('stock', 'В наличии', M.filter(m => m.stock).length)}${tab('order', 'Под заказ', M.filter(m => !m.stock).length)}<span class="sep"></span>${Object.entries(CATS).map(([k, c]) => tab(k, c.name, byCat(k).length)).join('')}</div>
+    <div class="tags"><span>Популярное:</span>${Object.entries(TAGS).map(([k, x]) => `<a href="#/catalog/${k}" class="${f === k ? 'on' : ''}">${x.n}</a>`).join('')}</div>
     <div class="grid">${list.map(card).join('')}</div>
     <section><div class="sec-head"><div><h2>Нет нужной модели?</h2><p>Привезём под заказ любую спецтехнику — подберём завод, комплектацию и срок</p></div><a class="more" href="#/order">Заказать подбор</a></div></section>
   </div>
@@ -261,6 +296,11 @@ function machine(id){
   const m = M.find(x => x.id === id);
   if (!m) return home();
   const c = CATS[m.cat];
+  seo(`${m.name} — купить в Краснодаре, цена ${m.price}`, `${m.name}: ${m.chips.join(', ')}. ${m.stock ? 'В наличии в Краснодаре' : 'Под заказ, срок ' + m.lead}. Цена ${m.price} с НДС.`);
+  const pay = isCny(m) ? `<p>Цена указана в юанях с НДС. Оплата в рублях по курсу банка поставщика на день оплаты; ориентир по курсу ЦБ на <span data-rdate>${RATE.d}</span> — ${rub(m)} (${rateTxt()} ₽ за юань).</p><p>Этапы оплаты фиксируем в договоре поставки.</p>` : '<p>Цена в рублях с НДС. Безналичная оплата по договору.</p>';
+  const ship = m.stock ? `<p>Техника стоит на площадке в Краснодаре. Осмотр и проверка — по предварительной записи, передача с ${m.cat === 'loader' ? 'ЭПСМ' : 'ЭПТС'} за 1–3 дня.</p><p>Доставку до вашего объекта рассчитаем по запросу.</p>` : `<p>Выкупаем технику на заводе, организуем доставку и таможенное оформление. Ориентировочный срок — ${m.lead}, точный срок фиксируем в договоре.</p><p>Передача техники в Краснодаре с ЭПТС.</p>`;
+  const specs = `<div class="specs">${m.specs.map(([h, rows]) => `<div class="spec"><h3>${h}</h3>${typeof rows[0] === 'string' ? `<ul>${rows.map(r => `<li>${r}</li>`).join('')}</ul>` : `<dl>${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>`}</div>`).join('')}</div>`;
+  const tabs = [['Характеристики', specs], ['Описание', `<div class="tabtxt"><p>${DESC[m.cat]}</p>${m.note ? `<p>${m.note}</p>` : ''}</div>`], ['Доставка', `<div class="tabtxt">${ship}</div>`], ['Оплата', `<div class="tabtxt">${pay}</div>`]];
   return phero(`<a href="#/catalog">Каталог</a> / <a href="#/catalog/${m.cat}">${c.name}</a>`, m.name, '') +
   `<div class="wrap">
     <div class="mach">
@@ -273,15 +313,17 @@ function machine(id){
         <span class="status ${m.stock ? 'in' : 'ord'}">${m.stock ? 'В наличии · ' + CITY : 'Под заказ · срок ' + m.lead}</span>
         <div class="keys">${m.keys.map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join('')}</div>
         <div class="buy">
-          <div class="price">${m.price}<small>с НДС</small></div>
+          <div class="price">${m.price}<small>с НДС${isCny(m) ? ` · ${rub(m)} по курсу ЦБ ${rateTxt()}` : ''}</small></div>
+          <div class="pnote">Цена зависит от комплектации${isCny(m) ? ' и курса юаня' : ''}</div>
           <p>${m.stock ? (m.price.endsWith('¥') ? 'Оплата в рублях по курсу банка поставщика на день оплаты. ' : 'Цена в рублях. ') + 'Осмотр на площадке в Краснодаре по записи.' : 'Оплата в рублях по курсу банка поставщика на день оплаты. Срок и этапы оплаты фиксируем в договоре.'}</p>
-          <button class="btn btn-acc" data-request="${m.id}">${m.stock ? 'Записаться на осмотр' : 'Запросить поставку'}</button>
+          ${m.stock ? `<button class="btn btn-acc" data-request="${m.id}" data-mode="buy">Заказать</button><button class="btn btn-line" data-request="${m.id}" data-mode="visit">Записаться на осмотр</button>` : `<button class="btn btn-acc" data-request="${m.id}" data-mode="lead">Узнать сроки поставки</button>`}
           <a class="btn btn-line" href="tel:88002501598">${PHONE}</a>
         </div>
         ${m.note ? `<div class="note" style="margin-top:14px">${m.note}</div>` : ''}
       </div>
     </div>
-    <div class="specs">${m.specs.map(([h, rows]) => `<div class="spec"><h3>${h}</h3>${typeof rows[0] === 'string' ? `<ul>${rows.map(r => `<li>${r}</li>`).join('')}</ul>` : `<dl>${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>`}</div>`).join('')}</div>
+    <div class="tabs">${tabs.map(([n], i) => `<button class="${i ? '' : 'on'}" data-tab="${i}">${n}</button>`).join('')}</div>
+    ${tabs.map(([, h], i) => `<div class="tabp" data-panel="${i}"${i ? ' hidden' : ''}>${h}</div>`).join('')}
     <section><div class="sec-head"><div><h2>Ещё в разделе «${c.name}»</h2></div><a class="more" href="#/catalog/${m.cat}">Все</a></div>
       <div class="grid">${byCat(m.cat).filter(x => x !== m).concat(M.filter(x => x.cat !== m.cat)).slice(0, 3).map(card).join('')}</div></section>
   </div>
@@ -323,7 +365,13 @@ function contacts(){
   ${leadbox()}`;
 }
 
+function seo(title, desc){
+  document.title = title + ' | ФавАвто';
+  document.querySelector('meta[name=description]').content = desc;
+}
+
 function route(){
+  seo('Спецтехника из Китая в Краснодаре — в наличии и под заказ', 'Автобетононасосы, автовышки, манипуляторы, тралы и погрузчики MGP в наличии в Краснодаре и под заказ из Китая. Цены с НДС, ЭПТС.');
   const [, page = '', arg] = location.hash.split('/');
   const pages = {'': home, catalog: () => catalog(arg || 'all'), m: () => machine(arg), order, portfolio: () => portfolio(arg || 'all'), contacts};
   $('#app').innerHTML = (pages[page] || home)();
@@ -334,19 +382,22 @@ function route(){
   window.scrollTo(0, 0);
 }
 
-function openModal(what){
+const MODES = {buy: 'Заказать технику', visit: 'Запись на осмотр', lead: 'Узнать сроки поставки', call: 'Заказать звонок'};
+function openModal(what, mode){
   const m = M.find(x => x.id === what);
   const name = m ? m.name : what;
   $('#modal').classList.remove('lightbox');
   $('.modal-box').innerHTML = `<button class="modal-x" data-close aria-label="Закрыть">×</button>
-    <h3 id="mtitle">${m && m.stock ? 'Запись на осмотр' : 'Заявка на технику'}</h3>
-    <p class="muted">${name || 'Перезвоним в течение рабочего дня, подберём технику и посчитаем цену.'}</p>${form(name)}`;
+    <h3 id="mtitle">${MODES[mode] || 'Заявка на технику'}</h3>
+    <p class="muted">${mode === 'call' ? 'Оставьте телефон — перезвоним в течение рабочего дня.' : name || 'Перезвоним в течение рабочего дня, подберём технику и посчитаем цену.'}</p>${mode === 'call' ? `<form class="form" data-form><input name="name" placeholder="Имя"><input name="phone" type="tel" placeholder="Телефон" required><button class="btn btn-acc">Перезвоните мне</button><small>Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</small></form>` : form(name)}`;
   $('#modal').hidden = false;
 }
 
 document.addEventListener('click', e => {
   const r = e.target.closest('[data-request]');
-  if (r){ e.preventDefault(); openModal(r.dataset.request); return; }
+  if (r){ e.preventDefault(); openModal(r.dataset.request, r.dataset.mode); return; }
+  const tb = e.target.closest('[data-tab]');
+  if (tb){ document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('on', b === tb)); document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== tb.dataset.tab); return; }
   const g = e.target.closest('[data-gal]');
   if (g){ $('.gm').src = `img/${g.dataset.gal}.jpg`; document.querySelectorAll('[data-gal]').forEach(b => b.classList.toggle('on', b === g)); return; }
   const z = e.target.closest('[data-zoom]');
@@ -377,3 +428,11 @@ if (!(lg >= 0 && lg < V.length)) { try { lg = +localStorage.getItem('fw-logo') |
 setLogo(lg >= 0 && lg < V.length ? lg : 0);
 window.addEventListener('hashchange', route);
 route();
+fetch('https://www.cbr-xml-daily.ru/daily_json.js').then(r => r.json()).then(j => {
+  const c = j.Valute.CNY;
+  RATE = {v: c.Value / c.Nominal, d: new Date(j.Date).toLocaleDateString('ru-RU')};
+  // обновляем суммы на странице без перерисовки
+  document.querySelectorAll('[data-rub]').forEach(el => el.textContent = '≈ ' + fmtRub(el.dataset.rub * RATE.v));
+  document.querySelectorAll('[data-rate], #rate').forEach(el => el.textContent = RATE.v.toFixed(2).replace('.', ','));
+  document.querySelectorAll('[data-rdate]').forEach(el => el.textContent = RATE.d);
+}).catch(() => {});

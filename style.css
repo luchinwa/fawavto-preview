@@ -204,6 +204,31 @@ section{padding:72px 0 0}
 .foot-in a:hover{color:var(--acc)}
 .foot-note{margin-top:36px;padding-top:20px;border-top:1px solid #232a32;font-size:13px;color:#6c7682}
 
+/* rate, offers, tags, tabs, call button */
+.rate{font-size:13px;color:var(--mut);background:var(--bg);border-radius:8px;padding:6px 10px;white-space:nowrap}
+.rate b{color:var(--ink)}
+.badge.wk{left:auto;right:12px;background:var(--acc);color:var(--ink)}
+.grid.g4{grid-template-columns:repeat(4,1fr)}
+.g4 .card-f{flex-direction:column;align-items:stretch}
+.g4 .card-f .btn{width:100%}
+.pnote{font-size:13px;color:var(--mut);margin-top:6px}
+.tags{display:flex;flex-wrap:wrap;gap:6px 14px;margin:-8px 0 24px;font-size:14px;align-items:center}
+.tags span{color:var(--mut)}
+.tags a{color:var(--ord);border-bottom:1px dashed currentColor}
+.tags a.on{color:var(--ink);font-weight:600;border-bottom-style:solid}
+.tabs{display:flex;gap:4px;margin-top:48px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{border:0;background:none;padding:12px 18px;font-weight:600;color:var(--mut);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--acc)}
+.tabp .specs{margin-top:24px}
+.tabtxt{background:#fff;border-radius:var(--r);padding:24px 28px;box-shadow:var(--sh);margin-top:24px;max-width:860px}
+.tabtxt p{margin:0 0 10px}
+.tabtxt p:last-child{margin:0}
+.callme{position:fixed;right:18px;bottom:18px;z-index:40;display:flex;align-items:center;gap:10px;height:56px;padding:0 22px 0 18px;border:0;border-radius:999px;background:var(--acc);color:var(--ink);font-weight:700;box-shadow:0 8px 28px rgba(0,0,0,.25);cursor:pointer}
+.callme svg{width:22px;height:22px}
+.callme:hover{background:var(--acc2)}
+@media (max-width:1080px){.rate{display:none}.grid.g4{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:720px){.grid.g4{grid-template-columns:1fr}.callme{bottom:62px;right:12px;width:56px;padding:0;justify-content:center}.callme span{display:none}}
+
 /* preview: logo switcher */
 .logo svg{width:auto;height:44px;display:block}
 .lsw{position:fixed;left:16px;bottom:16px;z-index:40;display:flex;align-items:center;gap:8px;background:#161a1f;color:#fff;border-radius:12px;padding:8px 10px 8px 14px;box-shadow:0 8px 28px rgba(0,0,0,.25);font-size:13px}
